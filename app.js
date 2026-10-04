@@ -34,6 +34,7 @@ const answers = {};
 let step = "home";
 let index = 0;
 let copyHint = "";
+let copyFailed = false;
 let visitorName = "";
 let savedLead = false;
 
@@ -183,9 +184,32 @@ function renderResult() {
   const focus = focusOf(snapshot);
   const sentence = leadSentence(snapshot, focus);
   app.replaceChildren();
-  app.append(el("p", "result-label", "你的结果"), el("h1", "result-title", `你目前最值得关注的是：${focus.title}`), el("p", "detail", focus.detail));
+  app.append(
+    el("p", "result-label", "你的结果"),
+    el("p", "result-kicker", "你目前最值得关注的是"),
+    el("h1", "result-title", focus.title),
+    el("p", "detail", focus.detail)
+  );
+
+  app.append(el("p", "note", "这不是保险推荐，也不是投资建议。只是把家庭目前可能存在的问题先找出来。"));
+  app.append(el("p", "detail", "如果你愿意，我可以和你聊20分钟，把这个问题具体拆开看看。"));
+
+  const add = el("section", "wechat-box");
+  add.append(el("h2", "block-title", "1. 加微信"));
+  add.append(el("p", "block-lead", "扫这个二维码加我。"));
+  add.append(el("p", "block-lead", "添加时，备注填「家庭」。"));
+  add.append(el("p", "", `微信号：${WECHAT_ID}`));
+  const img = document.createElement("img");
+  img.className = "qr";
+  img.alt = "扫这个二维码添加小蒋微信";
+  img.src = QR_IMAGE;
+  add.append(img);
+  add.append(el("p", "block-lead", "加完后，做第 2 步。"));
+  app.append(add);
 
   const sheet = el("section", "sheet");
+  sheet.append(el("h2", "block-title", "2. 发给小蒋的卡片"));
+  sheet.append(el("p", "block-lead", "加上微信后，点「复制这张卡片」，把文字发到微信里。"));
   const nameLabel = el("label", "name-line", "怎么称呼你");
   const nameInput = document.createElement("input");
   nameInput.type = "text";
@@ -205,39 +229,30 @@ function renderResult() {
     row.append(el("span", "", label), el("strong", mark === "先看" ? "mark now" : "mark", mark));
     sheet.append(row);
   });
-  const facts = el("p", "facts", `家庭：${snapshot.family}。父母：${snapshot.parents}。收入：${snapshot.income}。`);
-  sheet.append(facts, el("p", "next", `下一步：${nextStep(focus)}。`));
-  app.append(sheet);
-
-  app.append(el("p", "note", "这不是保险推荐，也不是投资建议。只是把家庭目前可能存在的问题先找出来。"));
-  app.append(el("p", "detail", "如果你愿意，我可以和你聊20分钟，把这个问题具体拆开看看。"));
-
-  const box = el("div", "wechat-box");
-  box.append(el("p", "", "添加小蒋微信"));
-  box.append(el("p", "", "扫这个二维码加我。添加时备注「家庭」。"));
-  box.append(el("p", "", `微信号：${WECHAT_ID}`));
-  const img = document.createElement("img");
-  img.className = "qr";
-  img.alt = "扫这个二维码添加小蒋微信";
-  img.src = QR_IMAGE;
-  box.append(img);
-  box.append(el("p", "", "加上之后，把下面这段话发给我。"));
-  box.append(el("p", "quote", sentence));
-  const copy = el("button", "primary", "复制这段话");
+  sheet.append(el("p", "facts", `家庭：${snapshot.family}。父母：${snapshot.parents}。收入：${snapshot.income}。`));
+  sheet.append(el("p", "next", `下一步：${nextStep(focus)}。`));
+  const copy = el("button", "primary", "复制这张卡片");
   copy.type = "button";
   copy.addEventListener("click", async () => {
-    const text = `备注家庭。${sentence}`;
+    const text = `备注家庭。${leadSentence(snapshot, focusOf(snapshot))}`;
     try {
       await navigator.clipboard.writeText(text);
-      copyHint = "已经复制。加上微信后发给我即可。";
+      copyHint = "已经复制。发到微信里即可。";
+      copyFailed = false;
     } catch {
-      copyHint = "没有自动复制。长按上面这段话，选复制。";
+      copyHint = "没有自动复制。长按下面这段文字，选复制。";
+      copyFailed = true;
     }
     render();
   });
-  box.append(copy);
-  if (copyHint) box.append(el("p", "copied", copyHint));
-  app.append(box);
+  sheet.append(copy);
+  if (copyHint) sheet.append(el("p", "copied", copyHint));
+  if (copyFailed) {
+    const send = el("div", "send-text");
+    send.append(el("p", "quote", `备注家庭。${sentence}`));
+    sheet.append(send);
+  }
+  app.append(sheet);
 }
 
 function render() {
