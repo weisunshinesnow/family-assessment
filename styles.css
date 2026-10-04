@@ -171,7 +171,7 @@ h1 {
 
 .qr {
   display: block;
-  width: 11rem;
+  width: min(100%, 18rem);
   height: auto;
   margin: 0.75rem auto 0;
 }
