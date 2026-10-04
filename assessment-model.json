@@ -1,0 +1,246 @@
+{
+  "version": "2.1",
+  "id": "family-architecture",
+  "title": "家庭后半程架构评估",
+  "homepage": {
+    "headline": "7道题，看看你的家庭，哪一块最需要提前准备。",
+    "sub": "不填写收入数字和资产明细。用3分钟，从收入、健康、养老、家庭责任看一看，家里有没有一块明显还没安排。",
+    "start": "开始评估"
+  },
+  "scoreByLetter": { "A": 0, "B": 1, "C": 2, "D": 3 },
+  "questions": [
+    {
+      "id": "q1",
+      "dimension": "family_stage",
+      "label": "家庭阶段",
+      "scored": false,
+      "text": "你现在的家庭是？",
+      "options": [
+        { "text": "单身" },
+        { "text": "已婚无孩" },
+        { "text": "已婚有孩子" },
+        { "text": "孩子已经成年" }
+      ]
+    },
+    {
+      "id": "q2",
+      "dimension": "income_resilience",
+      "label": "家庭收入",
+      "scored": true,
+      "text": "如果家庭主要收入来源突然中断半年，你觉得家里目前能比较从容地应对吗？",
+      "options": [
+        { "letter": "A", "text": "完全没问题，有充足储备" },
+        { "letter": "B", "text": "基本可以，但需要减少一些支出" },
+        { "letter": "C", "text": "会比较吃力，需要动用存款或其他资产" },
+        { "letter": "D", "text": "压力会很大，可能影响正常生活" }
+      ],
+      "why": {
+        "C": "收入如果中断半年，家里需要动用存款或其他资产。",
+        "D": "收入如果中断半年，正常生活会受到影响。"
+      },
+      "strength": "收入中断时，家里还有储备可以接住。",
+      "look": "收入中断时家里靠什么接住"
+    },
+    {
+      "id": "q3",
+      "dimension": "family_dependency",
+      "label": "家庭责任",
+      "scored": true,
+      "text": "如果家里有一个人暂时不能工作，你觉得谁最不能‘停下来’？",
+      "options": [
+        { "letter": "A", "text": "谁都可以暂时停下来，家庭还有其他收入来源" },
+        { "letter": "B", "text": "主要收入来源的人不能停" },
+        { "letter": "C", "text": "主要收入来源和家庭照护者都不能停" },
+        { "letter": "D", "text": "我自己就是家里最不能出问题的人" }
+      ],
+      "why": {
+        "B": "家庭主要收入依赖一个人，这个人不能停。",
+        "C": "赚钱的人和照护的人都不能停，责任叠在一起。",
+        "D": "你自己就是家里最不能出问题的那一个。"
+      },
+      "strength": "家里不只有一条收入来源，有人可以暂时停下来。",
+      "look": "家庭是不是压在一个人身上"
+    },
+    {
+      "id": "q4",
+      "dimension": "health_resilience",
+      "label": "医疗安排",
+      "scored": true,
+      "text": "如果家里有人突然遇到一次比较严重的疾病，需要长期治疗和休养，你觉得目前最大的压力会来自哪里？",
+      "options": [
+        { "letter": "A", "text": "医疗费用基本不用担心" },
+        { "letter": "B", "text": "医疗费用可以承担，但收入下降会有影响" },
+        { "letter": "C", "text": "医疗费用和收入中断都会带来压力" },
+        { "letter": "D", "text": "我最担心的是一次大病改变整个家庭的生活" }
+      ],
+      "why": {
+        "B": "治疗费用还能承担，收入下降会开始影响家里。",
+        "C": "治疗费用和收入中断会同时带来压力。",
+        "D": "一次大病就可能改变整个家庭的生活。"
+      },
+      "strength": "一次较重的治疗，费用上家里基本不用先慌。",
+      "look": "大病之后的费用和收入"
+    },
+    {
+      "id": "q5",
+      "dimension": "parent_care",
+      "label": "父母养老",
+      "scored": true,
+      "text": "如果未来父母需要长期照护，你觉得目前家里准备得怎么样？",
+      "options": [
+        { "letter": "A", "text": "父母已经有比较明确的养老安排" },
+        { "letter": "B", "text": "大方向有考虑，但还没有具体安排" },
+        { "letter": "C", "text": "主要还是靠我们兄弟姐妹临时解决" },
+        { "letter": "D", "text": "目前基本没有考虑过" }
+      ],
+      "why": {
+        "B": "父母养老有方向，还没有具体安排。",
+        "C": "父母如果需要长期照护，现在主要靠兄弟姐妹临时接。",
+        "D": "父母长期照护这件事，目前基本还没考虑。"
+      },
+      "strength": "父母养老已经有比较明确的安排。",
+      "look": "父母需要照护时谁来接"
+    },
+    {
+      "id": "q6",
+      "dimension": "retirement",
+      "label": "养老准备",
+      "scored": true,
+      "text": "你有没有认真算过，退休以后每个月大概要多少钱，才能维持自己希望的生活？",
+      "options": [
+        { "letter": "A", "text": "算过，而且已经有比较明确的安排" },
+        { "letter": "B", "text": "大概想过，但没有认真计算" },
+        { "letter": "C", "text": "没算过" },
+        { "letter": "D", "text": "完全不知道" }
+      ],
+      "why": {
+        "C": "退休以后每月要多少钱，还没算过。",
+        "D": "退休以后每月要多少钱，完全不知道。"
+      },
+      "strength": "退休以后每月大概要多少钱，已经有比较明确的安排。",
+      "look": "自己退休以后每月要多少钱"
+    },
+    {
+      "id": "q7",
+      "dimension": "planning",
+      "label": "长期规划",
+      "scored": true,
+      "text": "如果让你现在画一张‘家庭未来10年的规划图’，你觉得自己属于哪一种？",
+      "options": [
+        { "letter": "A", "text": "已经想得比较清楚，而且有具体安排" },
+        { "letter": "B", "text": "每件事都考虑过，但还比较零散" },
+        { "letter": "C", "text": "主要想到什么解决什么" },
+        { "letter": "D", "text": "现在更关注眼前，未来还没有认真规划" }
+      ],
+      "why": {
+        "B": "每件事都想过，安排还是零散的。",
+        "C": "家里的事主要是遇到了再解决。",
+        "D": "现在更顾眼前，未来10年还没有一张规划。"
+      },
+      "strength": "未来10年已经有比较清楚的安排。",
+      "look": "未来10年有没有一张总图"
+    }
+  ],
+  "profileRule": [
+    "Q1 家庭阶段不计分。total_score 只加 Q2～Q7，每题 A=0，B=1，C=2，D=3，范围 0 到 18。",
+    "先看 total_score。大于等于 16，画像是准备不足型，profile_code 为 preparation_gap。",
+    "否则只比较 Q2～Q7。如果 family_dependency 的分数等于这六题里的最高分，并且大于等于 2，画像是单点依赖型，profile_code 为 single_dependency。并列最高也算。",
+    "否则 total_score 小于等于 5，画像是稳稳向前型，profile_code 为 stable。",
+    "其余情况画像是未来压力型，profile_code 为 future_pressure。",
+    "页面不展示 total_score，也不展示综合指数。total_score 只写入数据库。"
+  ],
+  "profiles": {
+    "稳稳向前型": {
+      "code": "stable",
+      "mark": "基础相对稳",
+      "summary": "从这7道题来看，你的家庭基础相对稳定。最大的优势不是什么都准备好了，而是已经开始主动考虑未来。下一步通常不是再堆更多安排，而是看看现有的几块之间有没有重复、缺口，或者互相接不上的地方。",
+      "plain": "基础不错，接下来更重要的是把各部分连接起来。"
+    },
+    "单点依赖型": {
+      "code": "single_dependency",
+      "mark": "责任比较集中",
+      "summary": "从你的回答来看，家庭目前比较依赖某一个人维持收入和生活。只要这个人正常工作，一切都没有问题。如果这个关键的人突然不能工作，房贷、孩子、父母和日常生活可能会同时受到影响。技术系统最怕单点故障，家庭也是一样。",
+      "plain": "家里有一个最不能停下来的人。"
+    },
+    "未来压力型": {
+      "code": "future_pressure",
+      "mark": "未来会叠在一起",
+      "summary": "现在的生活可能没有太大问题。真正需要看的，是未来几年可能叠在一起的事：孩子、父母养老、自己的退休。每一件单独看都能应付。如果它们同时发生，家里的现金会开始紧。问题不一定是现在缺钱，而是未来的钱有没有提前安排。",
+      "plain": "现在过得去，未来几件事叠在一起时要提前排。"
+    },
+    "准备不足型": {
+      "code": "preparation_gap",
+      "mark": "很多事还没有安排",
+      "summary": "这不是说家里现在出了问题。更准确地说，很多以后可能发生的事，目前还没有比较明确的安排。收入暂时中断怎么办，父母需要长期照护怎么办，自己的退休怎么办，未来10年怎么办，这些现在还没有答案。现在没有答案不可怕，先把问题看清楚。",
+      "plain": "先把还没安排的那几件事看清楚。"
+    }
+  },
+  "note": "小蒋以前做技术架构时，会看一个节点如果突然出问题，整个系统还能不能运行。家庭收入、健康、父母养老、自己的退休，看起来是几件不同的事，最后都连在同一个家里。真正要做的，不是把每一个风险都消灭掉，而是一件事发生时，不至于把整个生活打乱。",
+  "result": {
+    "showScore": false,
+    "scoredQuestions": ["q2", "q3", "q4", "q5", "q6", "q7"],
+    "whyRule": "只看 Q2～Q7。取得分大于等于 2 的题，按分数从高到低，最多取 3 条；分数相同按题号。",
+    "strengthRule": "只看 Q2～Q7，取得分最低的一题。最低分小于等于 1 时，用该题 strength。最低分大于等于 2 时，写：现在还没有一块已经安排清楚。",
+    "lookRule": "只看 Q2～Q7，取得分最高的两题，写对应 look。最高分是 0 时，写：下一步是把已经想过的几件事接在一起。",
+    "focusRule": "focus 必须是六个维度中文名之一。取 Q2～Q7 最高分对应的名称。并列时按这个顺序：家庭责任、养老准备、父母养老、医疗安排、家庭收入、长期规划。",
+    "focusPriority": [
+      "family_dependency",
+      "retirement",
+      "parent_care",
+      "health_resilience",
+      "income_resilience",
+      "planning"
+    ],
+    "nextByFocus": {
+      "父母养老": "先聊父母养老",
+      "养老准备": "先聊自己的退休",
+      "医疗安排": "先聊医疗安排",
+      "家庭收入": "先聊家庭收入",
+      "家庭责任": "先聊家庭最不能出问题的人",
+      "长期规划": "先把家庭未来10年的事情梳理一遍"
+    },
+    "disclaimer": "这不是产品推荐，也不是投资建议。"
+  },
+  "lead": {
+    "afterResult": true,
+    "cta": "获取完整分析",
+    "intro": "如果你愿意，留下一个联系方式。小蒋按你的这7道题，把最需要先看的一块拆开讲。",
+    "fields": ["name", "phone", "wechat"],
+    "phonePattern": "^1[3-9]\\d{9}$",
+    "require": "手机号和微信号至少填一个。填了手机号就校验格式。",
+    "wechatQrRemains": true
+  },
+  "storage": {
+    "table": "leads",
+    "rpc": "submit_lead",
+    "source": "family-assessment",
+    "statusDefault": "new",
+    "totalScore": { "min": 0, "max": 18, "showOnPage": false },
+    "familyValues": ["单身", "已婚无孩", "已婚有孩子", "孩子已经成年"],
+    "retirementValues": [
+      "算过，而且已经有比较明确的安排",
+      "大概想过，但没有认真计算",
+      "没算过",
+      "完全不知道"
+    ],
+    "dimensions": {
+      "income_resilience": "家庭收入",
+      "family_dependency": "家庭责任",
+      "health_resilience": "医疗安排",
+      "parent_care": "父母养老",
+      "retirement": "养老准备",
+      "planning": "长期规划"
+    },
+    "dimensionValue": "字符串 0、1、2、3",
+    "profiles": {
+      "stable": "稳稳向前型",
+      "future_pressure": "未来压力型",
+      "single_dependency": "单点依赖型",
+      "preparation_gap": "准备不足型"
+    },
+    "focusValues": ["父母养老", "养老准备", "医疗安排", "家庭收入", "家庭责任", "长期规划"],
+    "answersShape": "JSON 对象。Q1 保存家庭阶段原文，不计分。Q2～Q7 保存 letter、text、score、dimension。dimensions 只含六个计分 key。",
+    "publicCan": ["execute submit_lead"],
+    "publicCannot": ["select", "insert", "update", "delete"]
+  }
+}
