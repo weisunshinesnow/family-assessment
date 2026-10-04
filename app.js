@@ -1,5 +1,7 @@
 const WECHAT_ID = "wei_wei10_10";
 const QR_IMAGE = "wechat-qr.jpg";
+const SUPABASE_URL = "https://azfmivoamqbbptrojodo.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_MsnpBgTJLrPGjTvxj9G5pg_0rqxibr_";
 
 const QUESTIONS = [
   {
@@ -37,6 +39,7 @@ let copyHint = "";
 let copyFailed = false;
 let visitorName = "";
 let savedLead = false;
+let saveTimer = 0;
 
 function focusOf(data) {
   const found = [];
@@ -94,7 +97,42 @@ function leadSentence(data, focus) {
   return `${who}我做了家庭人生架构测评。下一步：${nextStep(focus)}。家庭${data.family}，父母${data.parents}，收入${data.income}。${levels}。`;
 }
 
-function remember(data, focus) {
+function leadToken() {
+  const key = "xiaojang-lead-token";
+  let token = sessionStorage.getItem(key);
+  if (!token) {
+    token = crypto.randomUUID();
+    sessionStorage.setItem(key, token);
+  }
+  return token;
+}
+
+function saveLead(data, focus) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+  const levels = attention(data).map(([label, mark]) => `${label}${mark}`).join("，");
+  fetch(`${SUPABASE_URL}/rest/v1/rpc/submit_lead`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      p_token: leadToken(),
+      p_name: visitorName.trim().slice(0, 20),
+      p_family: data.family,
+      p_parents: data.parents,
+      p_retirement: data.retirement,
+      p_medical: data.medical,
+      p_income: data.income,
+      p_focus: focus.title,
+      p_attention: levels,
+      p_next: nextStep(focus)
+    })
+  }).catch(() => {});
+}
+
+function remember(data, focus, immediate) {
   const key = "xiaojang-assessment-leads";
   const list = JSON.parse(localStorage.getItem(key) || "[]");
   const entry = {
@@ -107,6 +145,13 @@ function remember(data, focus) {
   else list.push(entry);
   savedLead = true;
   localStorage.setItem(key, JSON.stringify(list));
+  if (immediate) {
+    clearTimeout(saveTimer);
+    saveLead(data, focus);
+    return;
+  }
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveLead(data, focus), 500);
 }
 
 function el(tag, className, text) {
@@ -159,7 +204,7 @@ function renderQuestion() {
     if (index === QUESTIONS.length - 1) {
       const snapshot = { ...answers };
       const focus = focusOf(snapshot);
-      remember(snapshot, focus);
+      remember(snapshot, focus, true);
       step = "result";
       render();
       return;
