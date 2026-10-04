@@ -214,23 +214,24 @@ function renderResult() {
 
   const box = el("div", "wechat-box");
   box.append(el("p", "", "添加小蒋微信"));
-  box.append(el("p", "", "在微信里长按二维码。备注「家庭」，再把下面这张卡片发给我。"));
+  box.append(el("p", "", "扫这个二维码加我。添加时备注「家庭」。"));
   box.append(el("p", "", `微信号：${WECHAT_ID}`));
   const img = document.createElement("img");
   img.className = "qr";
-  img.alt = "小蒋微信二维码";
+  img.alt = "扫这个二维码添加小蒋微信";
   img.src = QR_IMAGE;
   box.append(img);
+  box.append(el("p", "", "加上之后，把下面这段话发给我。"));
   box.append(el("p", "quote", sentence));
-  const copy = el("button", "primary", "复制这句话，去加微信");
+  const copy = el("button", "primary", "复制这段话");
   copy.type = "button";
   copy.addEventListener("click", async () => {
     const text = `备注家庭。${sentence}`;
     try {
       await navigator.clipboard.writeText(text);
-      copyHint = "已经复制。发到微信里即可。";
+      copyHint = "已经复制。加上微信后发给我即可。";
     } catch {
-      copyHint = "没有自动复制。长按上面那句话，选复制。";
+      copyHint = "没有自动复制。长按上面这段话，选复制。";
     }
     render();
   });
