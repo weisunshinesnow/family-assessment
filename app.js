@@ -34,6 +34,8 @@ const answers = {};
 let step = "home";
 let index = 0;
 let copyHint = "";
+let visitorName = "";
+let savedLead = false;
 
 function focusOf(data) {
   const found = [];
@@ -60,14 +62,49 @@ function focusOf(data) {
   };
 }
 
+function attention(data) {
+  const parents = data.parents === "70+" || data.parents === "60～70"
+    ? "先看"
+    : data.parents === "50～60"
+      ? "要看"
+      : "先放着";
+  const retirement = data.retirement === "没算过" || data.retirement === "不知道" ? "先看" : "先放着";
+  const medical = data.medical === "压力很大" || data.medical === "有压力"
+    ? "先看"
+    : data.medical === "没想过"
+      ? "要看"
+      : "先放着";
+  return [
+    ["父母养老", parents],
+    ["自己退休", retirement],
+    ["医疗安排", medical]
+  ];
+}
+
+function nextStep(focus) {
+  if (focus.title === "这几件事的衔接") return "先看这几件事能不能接在一起";
+  return `先聊${focus.title}`;
+}
+
 function leadSentence(data, focus) {
-  return `我做了家庭人生架构测评。最值得关注的是${focus.title}。家庭${data.family}，父母${data.parents}，退休花费${data.retirement}，医疗承受${data.medical}，收入${data.income}。`;
+  const name = visitorName.trim();
+  const who = name ? `我是${name}。` : "";
+  const levels = attention(data).map(([label, mark]) => `${label}${mark}`).join("，");
+  return `${who}我做了家庭人生架构测评。下一步：${nextStep(focus)}。家庭${data.family}，父母${data.parents}，收入${data.income}。${levels}。`;
 }
 
 function remember(data, focus) {
   const key = "xiaojang-assessment-leads";
   const list = JSON.parse(localStorage.getItem(key) || "[]");
-  list.push({ at: new Date().toISOString(), focus: focus.title, answers: data });
+  const entry = {
+    at: new Date().toISOString(),
+    focus: focus.title,
+    name: visitorName.trim(),
+    answers: data
+  };
+  if (savedLead && list.length) list[list.length - 1] = entry;
+  else list.push(entry);
+  savedLead = true;
   localStorage.setItem(key, JSON.stringify(list));
 }
 
@@ -147,14 +184,37 @@ function renderResult() {
   const sentence = leadSentence(snapshot, focus);
   app.replaceChildren();
   app.append(el("p", "result-label", "你的结果"), el("h1", "result-title", `你目前最值得关注的是：${focus.title}`), el("p", "detail", focus.detail));
-  if (focus.also.length) {
-    app.append(el("p", "also", `另外也值得看一眼：${focus.also.join("、")}。`));
-  }
+
+  const sheet = el("section", "sheet");
+  const nameLabel = el("label", "name-line", "怎么称呼你");
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.maxLength = 20;
+  nameInput.placeholder = "可以不填";
+  nameInput.value = visitorName;
+  nameInput.addEventListener("input", () => {
+    visitorName = nameInput.value;
+    const quote = app.querySelector(".quote");
+    if (quote) quote.textContent = leadSentence(snapshot, focusOf(snapshot));
+    remember(snapshot, focusOf(snapshot));
+  });
+  nameLabel.append(nameInput);
+  sheet.append(nameLabel);
+  attention(snapshot).forEach(([label, mark]) => {
+    const row = el("div", "row");
+    row.append(el("span", "", label), el("strong", mark === "先看" ? "mark now" : "mark", mark));
+    sheet.append(row);
+  });
+  const facts = el("p", "facts", `家庭：${snapshot.family}。父母：${snapshot.parents}。收入：${snapshot.income}。`);
+  sheet.append(facts, el("p", "next", `下一步：${nextStep(focus)}。`));
+  app.append(sheet);
+
   app.append(el("p", "note", "这不是保险推荐，也不是投资建议。只是把家庭目前可能存在的问题先找出来。"));
   app.append(el("p", "detail", "如果你愿意，我可以和你聊20分钟，把这个问题具体拆开看看。"));
 
   const box = el("div", "wechat-box");
-  box.append(el("p", "", "添加小蒋微信时，备注「家庭」，并把下面这句话发给我。"));
+  box.append(el("p", "", "添加小蒋微信"));
+  box.append(el("p", "", "备注「家庭」，并把下面这张卡片发给我。"));
   if (WECHAT_ID) box.append(el("p", "", `微信号：${WECHAT_ID}`));
   else box.append(el("p", "", "打开公众号「小蒋聊人生架构」，在菜单里点「加微信」。"));
   box.append(el("p", "quote", sentence));

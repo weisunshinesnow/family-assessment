@@ -115,10 +115,43 @@ h1 {
   font-size: 1.05rem;
 }
 
-.also {
-  margin: 0.75rem 0 0;
-  color: var(--muted);
+.sheet {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
 }
+
+.name-line {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.name-line input {
+  font: inherit;
+  color: var(--ink);
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: #fff;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.mark { color: var(--muted); font-weight: 650; }
+.mark.now { color: var(--accent); }
+
+.facts, .next { margin: 0.9rem 0 0; }
 
 .note, .wechat-box {
   margin-top: 1.25rem;
