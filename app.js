@@ -1,5 +1,5 @@
-const WECHAT_ID = "";
-const QR_IMAGE = "wechat-qr.png";
+const WECHAT_ID = "wei_wei10_10";
+const QR_IMAGE = "wechat-qr.jpg";
 
 const QUESTIONS = [
   {
@@ -214,16 +214,14 @@ function renderResult() {
 
   const box = el("div", "wechat-box");
   box.append(el("p", "", "添加小蒋微信"));
-  box.append(el("p", "", "备注「家庭」，并把下面这张卡片发给我。"));
-  if (WECHAT_ID) box.append(el("p", "", `微信号：${WECHAT_ID}`));
-  else box.append(el("p", "", "打开公众号「小蒋聊人生架构」，在菜单里点「加微信」。"));
-  box.append(el("p", "quote", sentence));
+  box.append(el("p", "", "在微信里长按二维码。备注「家庭」，再把下面这张卡片发给我。"));
+  box.append(el("p", "", `微信号：${WECHAT_ID}`));
   const img = document.createElement("img");
   img.className = "qr";
   img.alt = "小蒋微信二维码";
   img.src = QR_IMAGE;
-  img.addEventListener("error", () => img.remove());
   box.append(img);
+  box.append(el("p", "quote", sentence));
   const copy = el("button", "primary", "复制这句话，去加微信");
   copy.type = "button";
   copy.addEventListener("click", async () => {
