@@ -1,1 +1,15 @@
 .secrets/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.swp
