@@ -1,7 +1,7 @@
 import { buildLeadPayload, buildResult } from "./src/assessment/assessment-engine.js";
 import { submitLead } from "./src/data/lead-repository.js";
 import { submitInterestLead } from "./src/data/interest-repository.js";
-import { formatYuan, interestGap } from "./src/tools/interest-gap.js";
+import { formatYuan, interestGap, interestGapCopy } from "./src/tools/interest-gap.js";
 
 const WECHAT_ID = "wei_wei10_10";
 const QR_IMAGE = "wechat-qr.jpg";
@@ -177,7 +177,7 @@ function renderHub() {
   const list = el("div", "tool-list");
   [
     ["assessment", "7道题", "家庭人生架构测评", "从收入、健康、养老和家庭责任，看家里哪一块最需要先安排。"],
-    ["interest", "利息差额", "家庭存款利息差额计算器", "输入存款金额、现有利率和对比利率，看每年少赚多少、五年累计少多少。"]
+    ["interest", "利息差额", "家庭存款利息差额计算器", "输入存款金额、现有利率和对比利率，看按对比利率每年多获得或少获得多少。"]
   ].forEach(([tool, kicker, title, text]) => {
     const card = document.createElement("a");
     card.className = "tool-card";
@@ -238,8 +238,7 @@ function paintInterest(result, follow) {
     return;
   }
 
-  const annualLabel = gap.annualGap > 0 ? "每年少赚" : gap.annualGap < 0 ? "每年多赚" : "每年利息相同";
-  const totalLabel = gap.annualGap > 0 ? "五年累计少赚" : gap.annualGap < 0 ? "五年累计多出" : "五年累计没有差额";
+  const { annual: annualLabel, total: totalLabel } = interestGapCopy(gap.annualGap);
   result.append(
     el("p", "result-label", annualLabel),
     el("p", "gap-figure", formatYuan(gap.annualGap)),
@@ -259,8 +258,7 @@ function paintInterest(result, follow) {
 }
 
 function interestCard(gap) {
-  const annualLabel = gap.annualGap > 0 ? "每年少赚" : gap.annualGap < 0 ? "每年多赚" : "每年利息相同";
-  const totalLabel = gap.annualGap > 0 ? "五年累计少赚" : gap.annualGap < 0 ? "五年累计多出" : "五年累计没有差额";
+  const { annual: annualLabel, total: totalLabel } = interestGapCopy(gap.annualGap);
   return `备注家庭。我算了存款利息差额。存款${state.depositAmount.trim()}元，现有利率${state.currentRate.trim()}%，对比利率${state.compareRate.trim()}%。${annualLabel}${formatYuan(gap.annualGap)}，${totalLabel}${formatYuan(gap.cumulativeGap)}。`;
 }
 
@@ -328,7 +326,7 @@ async function submitInterestContact() {
 
 function renderInterestSubmitted() {
   const gap = state.interestGap;
-  const annualLabel = gap.annualGap > 0 ? "每年少赚" : gap.annualGap < 0 ? "每年多赚" : "每年利息相同";
+  const { annual: annualLabel } = interestGapCopy(gap.annualGap);
   app.replaceChildren(
     el("h1", "", "你的测算已经提交给小蒋。"),
     el("p", "sub", `${annualLabel}${formatYuan(gap.annualGap)}。`)

@@ -34,6 +34,12 @@ export function interestGap(amountText, currentText, compareText) {
   };
 }
 
+export function interestGapCopy(annualGap) {
+  if (annualGap > 0) return { annual: "每年多获得", total: "五年累计多获得" };
+  if (annualGap < 0) return { annual: "每年少获得", total: "五年累计少获得" };
+  return { annual: "每年利息相同", total: "五年累计没有差额" };
+}
+
 export function formatYuan(value) {
   return `${Math.abs(value).toLocaleString("zh-CN", {
     minimumFractionDigits: 2,
