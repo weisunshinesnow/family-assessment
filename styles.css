@@ -84,6 +84,12 @@ h1 {
   color: var(--ink);
 }
 
+.choice {
+  display: block;
+  width: 100%;
+  margin-top: 0.65rem;
+}
+
 .option[aria-checked="true"] {
   background: var(--pick);
   border-color: var(--accent);

@@ -5,7 +5,7 @@ import { formatYuan, interestGap, interestGapCopy } from "./src/tools/interest-g
 
 const WECHAT_ID = "wei_wei10_10";
 const QR_IMAGE = "wechat-qr.jpg";
-const MODEL_URL = "assessment-model.json";
+const MODEL_URL = "assessment-model.json?v=resultflow1";
 const TOKEN_KEY = "xiaojang-lead-token";
 const INTEREST_TOKEN_KEY = "xiaojang-interest-token";
 const SESSION_KEY = "xiaojang-assessment-session";
@@ -24,6 +24,7 @@ const state = {
   formError: "",
   submitting: false,
   assessment: null,
+  contactChoice: "",
   copyHint: "",
   copyFallback: false,
   depositAmount: "",
@@ -379,6 +380,7 @@ function renderHome() {
     state.answers = {};
     state.index = 0;
     state.assessment = null;
+    state.contactChoice = "";
     state.page = "question";
     persistSession();
     render();
@@ -462,15 +464,27 @@ function appendList(section, items) {
   section.append(list);
 }
 
+function renderGuide(title, body, items) {
+  const section = el("section", "sheet");
+  section.append(el("h2", "block-title", title));
+  if (body) section.append(el("p", "block-lead", body));
+  if (items?.length) appendList(section, items);
+  app.append(section);
+}
+
 function renderResult() {
   const model = state.model;
   const assessment = state.assessment;
+  const guide = assessment.profile.guide;
   app.replaceChildren(
     el("p", "result-label", "你的家庭属于"),
     el("h1", "result-title", assessment.profileTitle),
     el("p", "portrait-mark", assessment.profile.mark),
     el("p", "detail", assessment.profile.summary)
   );
+
+  if (guide?.concern) renderGuide("这一类型主要看什么", guide.concern);
+  if (guide?.why) renderGuide("为什么值得关注", guide.why);
 
   const focus = el("section", "sheet");
   focus.append(
@@ -486,21 +500,83 @@ function renderResult() {
   else why.append(el("p", "block-lead", "目前没有明显需要优先处理的单项。"));
   app.append(why);
 
+  if (guide?.checks?.length) renderGuide("你可以优先检查", "", guide.checks);
+  if (guide?.actions?.length) renderGuide("可以先做的几件事", "", guide.actions);
+
   const strength = el("section", "sheet");
   strength.append(el("h2", "block-title", "你的优势"), el("p", "block-lead", assessment.strength));
   app.append(strength);
 
   const look = el("section", "sheet");
-  look.append(el("h2", "block-title", "下一步看什么"));
+  look.append(el("h2", "block-title", "根据你的回答，先看这里"));
   appendList(look, assessment.look);
   app.append(look);
 
   const view = el("section", "sheet");
   view.append(el("h2", "block-title", "小蒋怎么看？"), el("p", "block-lead", model.note));
   app.append(view, el("p", "note", model.result.disclaimer));
+  renderContactInvite();
+}
 
-  const lead = el("section", "lead-form");
-  lead.append(el("h2", "block-title", model.lead.cta), el("p", "block-lead", model.lead.intro));
+function contactBackButton() {
+  const back = el("button", "ghost", "返回");
+  back.type = "button";
+  back.addEventListener("click", () => {
+    state.contactChoice = "";
+    state.formError = "";
+    render();
+  });
+  return back;
+}
+
+function renderContactInvite() {
+  const lead = state.model.lead;
+  const section = el("section", "sheet");
+  section.append(
+    el("h2", "block-title", "需要的话，可以联系小蒋"),
+    el("p", "block-lead", lead.invite)
+  );
+  if (state.contactChoice === "done") {
+    section.append(el("p", "block-lead", lead.done));
+    const again = el("button", "ghost", "再看看联系方式");
+    again.type = "button";
+    again.addEventListener("click", () => {
+      state.contactChoice = "";
+      render();
+    });
+    section.append(again);
+    app.append(section);
+    return;
+  }
+  if (!state.contactChoice) {
+    [
+      ["wechat", lead.viewContact],
+      ["form", lead.requestContact],
+      ["done", lead.finish]
+    ].forEach(([choice, label]) => {
+      const button = el("button", "option choice", label);
+      button.type = "button";
+      button.addEventListener("click", () => {
+        state.contactChoice = choice;
+        state.formError = "";
+        render();
+      });
+      section.append(button);
+    });
+  }
+  app.append(section);
+  if (state.contactChoice === "wechat") appendWechat(true);
+  if (state.contactChoice === "form") appendLeadForm();
+  if (state.contactChoice) {
+    const target = app.querySelector(".lead-form, .wechat-box") || section;
+    target.scrollIntoView({ block: "start" });
+  }
+}
+
+function appendLeadForm() {
+  const lead = state.model.lead;
+  const form = el("section", "lead-form");
+  form.append(el("h2", "block-title", lead.requestContact), el("p", "block-lead", lead.intro));
   [
     ["name", "怎么称呼你", "可以不填", 20],
     ["phone", "手机号", "手机号和微信号至少填一个", 11],
@@ -518,18 +594,18 @@ function renderResult() {
       state.formError = "";
     });
     label.append(input);
-    lead.append(label);
+    form.append(label);
   });
-  if (state.formError) lead.append(el("p", "form-error", state.formError));
-  const submit = el("button", "primary", state.submitting ? "正在提交…" : model.lead.cta);
+  if (state.formError) form.append(el("p", "form-error", state.formError));
+  const submit = el("button", "primary", state.submitting ? "正在提交…" : lead.cta);
   submit.type = "button";
   submit.disabled = state.submitting;
   submit.addEventListener("click", submitContact);
-  lead.append(submit);
-  app.append(lead);
+  form.append(submit, contactBackButton());
+  app.append(form);
 }
 
-function appendWechat() {
+function appendWechat(withBack) {
   const box = el("section", "wechat-box");
   box.append(
     el("h2", "block-title", "加微信"),
@@ -552,12 +628,14 @@ function appendWechat() {
     fallback.append(el("p", "quote", resultCard()));
     box.append(fallback);
   }
+  if (withBack) box.append(contactBackButton());
   app.append(box);
 }
 
 function renderSubmitted() {
   app.replaceChildren(
-    el("h1", "", "你的完整分析已经提交给小蒋。"),
+    el("h1", "", "联系方式已经提交。"),
+    el("p", "sub", "小蒋会按你留下的方式联系你。"),
     el("p", "sub", `你目前最值得关注的是：${state.assessment.focus}。`)
   );
   appendWechat();
